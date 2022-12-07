@@ -4,19 +4,19 @@
     <div class="search">
       <el-form ref="form" :inline="true">
         <template v-for="item in searchList" :key="item.index">
-          <el-form-item :label="item.name" v-if="item.type=='input'">
+          <el-form-item :label="item.name" v-if="item.type == 'input'">
             <el-input v-model="searchForm[item.key]" :placeholder="item.placeholder" :maxlength="item.maxlength" />
           </el-form-item>
-          <el-form-item :label="item.name" v-if="item.type=='select'">
+          <el-form-item :label="item.name" v-if="item.type == 'select'">
             <el-select v-model="searchForm[item.key]" :placeholder="item.placeholder">
               <el-option v-for="i in item.selectList" :key="i.index" :label="i.label" :value="i.value"
                 :placeholder="item.placeholder" />
             </el-select>
           </el-form-item>
-          <el-form-item :label="item.name" v-if="item.type=='date'">
-            <el-date-picker v-model="searchForm[item.key]" :type="item.dateType||'date'" :placeholder="item.placeholder"
-              :default-value="item.defaultValue" :editable="item.editable" :format="item.format"
-              :value-format="item.valueFormat" :end-placeholder="item.endplaceholder"
+          <el-form-item :label="item.name" v-if="item.type == 'date'">
+            <el-date-picker v-model="searchForm[item.key]" :type="item.dateType || 'date'"
+              :placeholder="item.placeholder" :default-value="item.defaultValue" :editable="item.editable"
+              :format="item.format" :value-format="item.valueFormat" :end-placeholder="item.endplaceholder"
               :start-placeholder="item.startPlaceholder" :clearable="item.clearable"
               :disabled-date="item.disabledDate" />
           </el-form-item>
@@ -30,12 +30,12 @@
     <div class="table">
       <div style="margin-bottom: 10px;text-align: left;margin: 5px 0;display: flex;align-items: center;">
         <el-button v-for="item in crudList" :key="item.index" :type="item.type" @click.stop="crudClick(item.name)">
-          {{item.name}}
+          {{ item.name }}
         </el-button>
         <div style="margin-left:auto;">
           <el-popover placement="top" :width="800">
             <el-checkbox-group v-model="checkList" @change="checkChange">
-              <el-checkbox v-for="item in checkData" :label="item.label" :key="item.index">{{item.label}}
+              <el-checkbox v-for="item in checkData" :label="item.label" :key="item.index">{{ item.label }}
               </el-checkbox>
             </el-checkbox-group>
             <template #reference>
@@ -51,49 +51,50 @@
 
       <el-table :data="tableData" border highlight-current-row @selection-change="selectionChange"
         @select-all="selectAll"
-        :header-cell-style="{background:'#eef1f6',color:'#606266','border-Bottom':'1px solid #8a8a8a'}"
+        :header-cell-style="{ background: '#eef1f6', color: '#606266', 'border-Bottom': '1px solid #8a8a8a' }"
         style="width: 100%;margin-bottom: 5px" :cell-style="cellStyle" v-loading="loading" :max-height="maxHeight">
         <template v-for="item in columns" :key="item.index" align='center'>
-          <el-table-column type="index" width="80" v-if="item.type=='index'" label="序号" align='center' />
-          <el-table-column type="selection" width="50" v-if="item.type=='selection'" align='center' />
-          <el-table-column type="expand" width="100" v-if="item.type=='expand'" align='center' />
-          <el-table-column :width="item.width" v-if="item.type=='switch'" align='center'>
-            <template #default={row}>
-              <el-switch v-model="row[item.property]" :size="item.size" :active-text="item.activeText"
+          <el-table-column type="index" width="80" v-if="item.type == 'index'" label="序号" align='center' />
+          <el-table-column type="selection" width="50" v-if="item.type == 'selection'" align='center' />
+          <el-table-column type="expand" width="100" v-if="item.type == 'expand'" align='center' />
+          <el-table-column :width="item.width" v-if="item.type == 'switch'" align='center'>
+            <template #default="scope">
+              <el-switch v-model="scope.row[item.property]" :size="item.size" :active-text="item.activeText"
                 :inactive-text="item.inactiveText" />
             </template>
           </el-table-column>
-          <el-table-column :width="item.width" v-if="item.type=='double'" align='center'>
+          <el-table-column :width="item.width" v-if="item.type == 'double'" align='center'>
             <template v-for="i in item.childrenList" :key="i.index">
               <el-table-column :label="i.label" :property="i.property" :width="i.width" :align="i.align"
-                v-if="i.type=='text'">
-                <template #default={row}>
-                  <span @click.stop="textClick(row[i.property])">{{row[i.property]}}</span>
+                v-if="i.type == 'text'">
+                <template #default="scope">
+                  <span @click.stop="textClick(scope.row[i.property])">{{ scope.row[i.property] }}</span>
                 </template>
               </el-table-column>
-              <el-table-column v-if="i.type=='img'" :label="i.label" :property="i.property" width="100" align="center">
-                <template #default={row}>
-                  <el-image :src="row.src" :preview-src-list="[row.src]" style="width:70px;height:20px" />
+              <el-table-column v-if="i.type == 'img'" :label="i.label" :property="i.property" width="100"
+                align="center">
+                <template #default="scope">
+                  <el-image :src="scope.row.src" :preview-src-list="[scope.row.src]" style="width:70px;height:20px" />
                 </template>
               </el-table-column>
             </template>
           </el-table-column>
           <el-table-column :label="item.label" :property="item.property" :width="item.width" :align="item.align"
-            v-if="item.type=='text'">
-            <template #default={row}>
-              <span @click.stop="textClick(row[item.property])">{{row[item.property]}}</span>
+            v-if="item.type == 'text'">
+            <template #default="scope">
+              <span @click.stop="textClick(scope.row[item.property])">{{ scope.row[item.property] }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="item.type=='img'" :label="item.label" :property="item.property" width="100"
+          <el-table-column v-if="item.type == 'img'" :label="item.label" :property="item.property" width="100"
             align="center">
-            <template #default={row}>
-              <el-image :src="row.src" :preview-src-list="[row.src]" style="width:70px;height:20px" />
+            <template #default="scope">
+              <el-image :src="scope.row.src" :preview-src-list="[scope.row.src]" style="width:70px;height:20px" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="item.type=='operation'" :fixed="item.fixed">
-            <template #default={row}>
+          <el-table-column label="操作" align="center" v-if="item.type == 'operation'" :fixed="item.fixed">
+            <template #default="scope">
               <el-button v-for="i in item.operationList" :key="i.index" :type="i.type" size="small"
-                @click.stop="operationClick(row,i.name)" :disabled="row[i.key]">{{i.name}}
+                @click.stop="operationClick(scope.row, i.name)" :disabled="scope.row[i.key]">{{ i.name }}
               </el-button>
             </template>
           </el-table-column>
@@ -260,14 +261,18 @@ export default defineComponent({
 </script>
 <style lang='scss' scoped>
 @import "@/css/publicCorlor.css";
+
 :deep(.el-table--border, .el-table--group) {
   border: 1px solid #8a8a8a;
 }
+
 :deep(.el-form-item) {
   margin: 5px;
 }
+
 .index {
   margin: 5px;
+
   .search {
     text-align: left;
     border-bottom: 2px solid #999;

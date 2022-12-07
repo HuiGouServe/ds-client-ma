@@ -12,7 +12,8 @@
             <span style="width:131px;text-align: left;">{{ item.name }}</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item v-for="(i, idx) in item.children" :key="idx" :index="i.path" @click="meunClick(i)">{{ i.name }}
+            <el-menu-item v-for="(i, idx) in item.children" :key="idx" :index="i.path" @click="meunClick(i)">{{ i.name
+            }}
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
@@ -66,7 +67,7 @@
       </div>
       <div class="main">
         <div v-if="isIndex == '/index'" style="font-size: 30px;margin:0 auto;padding:100px">欢迎登录惠购后台系统</div>
-        <router-view v-else v-slot="{ Component }" :key="$route.path">
+        <router-view v-else v-slot="{ Component }" :key="$route.path" style="height: 100%;width: 100%;">
           <transition name="fade">
             <keep-alive>
               <component :is="Component" :key="title" />
@@ -74,7 +75,7 @@
           </transition>
         </router-view>
       </div>
-      <div class="foot" style="z-index: 1000;">惠购后台系统管理平台</div>
+      <div class="foot">惠购后台系统管理平台</div>
     </div>
 
     <dialogList :formList="formList" :dialogVisible="dialogVisible" width="500px" :ruleForm="ruleForm" title="修改密码"
@@ -257,6 +258,7 @@ export default defineComponent({
   .body {
     overflow: hidden;
     flex: 1;
+    position: relative;
 
     .top {
       text-align: left;
@@ -318,11 +320,17 @@ export default defineComponent({
     }
 
     .main {
-      height: calc(100% - 120px);
+      height: calc(100% - 80px);
+      z-index: 10;
     }
 
     .foot {
-      z-index: 10000;
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
       height: 40px;
       background: #888;
       font-size: 20px;

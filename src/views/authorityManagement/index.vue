@@ -1,6 +1,6 @@
 <!-- 权限管理 -->
 <template>
-  <div class='index'>
+  <div>
     <tableList :table-data="tableData" :column-data="columnData" :searchList="searchList" :searchForm="searchForm"
       :crudList="crudList" @crudClick="crudClick" @handleSizeChange="handleSizeChange"
       @handleCurrentChange="handleCurrentChange" @search="search" @reset="reset" @selectionChange="selectionChange"
@@ -223,8 +223,5 @@ export default defineComponent({
 
 </script>
 <style lang='scss' scoped>
-.index {
-  width: 100%;
-  height: 100%;
-}
+
 </style>
