@@ -5,10 +5,12 @@
       <el-form ref="form" :inline="true">
         <template v-for="item in searchList" :key="item.index">
           <el-form-item :label="item.name" v-if="item.type == 'input'">
-            <el-input v-model="searchForm[item.key]" :placeholder="item.placeholder" :maxlength="item.maxlength" />
+            <el-input v-model="searchForm[item.key]" :placeholder="item.placeholder" :maxlength="item.maxlength"
+              :style="{ width: item.width + 'px' }" />
           </el-form-item>
           <el-form-item :label="item.name" v-if="item.type == 'select'">
-            <el-select v-model="searchForm[item.key]" :placeholder="item.placeholder">
+            <el-select v-model="searchForm[item.key]" :placeholder="item.placeholder"
+              :style="{ width: item.width + 'px' }">
               <el-option v-for="i in item.selectList" :key="i.index" :label="i.label" :value="i.value"
                 :placeholder="item.placeholder" />
             </el-select>
@@ -17,8 +19,8 @@
             <el-date-picker v-model="searchForm[item.key]" :type="item.dateType || 'date'"
               :placeholder="item.placeholder" :default-value="item.defaultValue" :editable="item.editable"
               :format="item.format" :value-format="item.valueFormat" :end-placeholder="item.endplaceholder"
-              :start-placeholder="item.startPlaceholder" :clearable="item.clearable"
-              :disabled-date="item.disabledDate" />
+              :start-placeholder="item.startPlaceholder" :clearable="item.clearable" :disabled-date="item.disabledDate"
+              :style="{ width: item.width + 'px' }" />
           </el-form-item>
         </template>
         <el-form-item>
@@ -53,9 +55,10 @@
         @select-all="selectAll"
         :header-cell-style="{ background: '#eef1f6', color: '#606266', 'border-Bottom': '1px solid #8a8a8a' }"
         style="width: 100%;margin-bottom: 5px" :cell-style="cellStyle" v-loading="loading" :max-height="maxHeight">
-        <template v-for="item in columns" :key="item.index" align='center'>
-          <el-table-column type="index" width="80" v-if="item.type == 'index'" label="序号" align='center' />
-          <el-table-column type="selection" width="50" v-if="item.type == 'selection'" align='center' />
+        <template v-for="item in columns" :key="item.index">
+          <el-table-column type="index" v-if="item.type == 'index'" label="序号" align='center'
+            :width="item.width || 80" />
+          <el-table-column type="selection" v-if="item.type == 'selection'" align='center' :width="item.width || 50" />
           <el-table-column type="expand" width="100" v-if="item.type == 'expand'" align='center' />
           <el-table-column :width="item.width" v-if="item.type == 'switch'" align='center'>
             <template #default="scope">
@@ -80,18 +83,22 @@
             </template>
           </el-table-column>
           <el-table-column :label="item.label" :property="item.property" :width="item.width" :align="item.align"
-            v-if="item.type == 'text'">
+            v-if="item.type == 'text'" :show-overflow-tooltip="item.showOverflow">
             <template #default="scope">
-              <span @click.stop="textClick(scope.row[item.property])">{{ scope.row[item.property] }}</span>
+              <span @click.stop="textClick(scope.row[item.property])">
+                {{ item.dataFormat ? (dataFormat(scope.row[item.property] * 1)) : scope.row[item.property] }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column v-if="item.type == 'img'" :label="item.label" :property="item.property" width="100"
             align="center">
             <template #default="scope">
-              <el-image :src="scope.row.src" :preview-src-list="[scope.row.src]" style="width:70px;height:20px" />
+              <el-image :src="scope.row[item.property]" :preview-src-list="[scope.row[item.property]]"
+                style="width:60px;height:30px" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="item.type == 'operation'" :fixed="item.fixed">
+          <el-table-column label="操作" align="center" v-if="item.type == 'operation'" :fixed="item.fixed"
+            :width="item.width">
             <template #default="scope">
               <el-button v-for="i in item.operationList" :key="i.index" :type="i.type" size="small"
                 @click.stop="operationClick(scope.row, i.name)" :disabled="scope.row[i.key]">{{ i.name }}
@@ -208,6 +215,18 @@ export default defineComponent({
 
 
   methods: {
+    dataFormat(time: number) {
+      if (!time) return ''
+      const date = new Date(time)
+      const y = date.getFullYear()
+      const m = (date.getMonth() + 1 + '').padStart(2, '0')
+      const d = (date.getDate() + '').padStart(2, '0')
+      const hh = (date.getHours() + '').padStart(2, '0')
+      const mm = (date.getMinutes() + '').padStart(2, '0')
+      const ss = (date.getSeconds() + '').padStart(2, '0')
+      return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+    },
+
     handleSizeChange(e: any) {
       this.$emit("handleSizeChange", e)
     },
@@ -264,6 +283,19 @@ export default defineComponent({
 
 :deep(.el-table--border, .el-table--group) {
   border: 1px solid #8a8a8a;
+}
+
+:deep(.el-table td,
+  .el-table th.is-leaf,
+  .el-table--border,
+  .el-table--group) {
+  border-color: #8a8a8a;
+}
+
+:deep(.el-table--border::after,
+  .el-table--group::after,
+  .el-table::before) {
+  background-color: #8a8a8a;
 }
 
 :deep(.el-form-item) {

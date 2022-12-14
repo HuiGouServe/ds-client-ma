@@ -61,9 +61,15 @@ export const spuerRoutes: Array<RouteRecordRaw> = [  //超级管理员
             path: '/user/clientManagemen',
             name: '客户管理',
             component: () => import('@/views/user/clientManagement/index.vue'),
+          },
+          {
+            path: '/user/indentityManagemen',
+            name: '审核管理',
+            component: () => import('@/views/user/indentityManagemen/index.vue'),
           }
         ]
       },
+
       {
         path: '/shop',
         name: '商品管理',

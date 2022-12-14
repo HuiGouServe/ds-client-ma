@@ -81,7 +81,7 @@ export default defineComponent({
             { value: "普通管理员", label: "普通管理员" },
             { value: "普通用户", label: "普通用户" }],
         },
-        { type: 'date', name: '创建时间：', key: "userRank", dateType: "", placeholder: '请选择时间' },
+        { type: 'date', name: '创建时间：', key: "time", dateType: "daterange", placeholder: '请选择时间', width: '210' },
       ],
       crudList: [
         { name: '新增', type: 'primary' },
@@ -89,6 +89,7 @@ export default defineComponent({
         { name: '批量导出', type: 'success' }
       ],
       searchForm: {
+        time: [],
         userName: '',
         userRank: '',
         startTime: '',
@@ -191,7 +192,11 @@ export default defineComponent({
 
     getList() {
       this.loading = true
-      http.post("/user/getList", this.searchForm).then((res: any) => {
+      this.searchForm.startTime = this.getTime(this.searchForm.time[0])
+      this.searchForm.endTime = this.getTime(this.searchForm.time[1])
+      let prams = copyObj(this.searchForm)
+      delete prams.time
+      http.post("/user/getList", prams).then((res: any) => {
         this.loading = false
         if (res.code == 200) {
           res.data.records.forEach((item: any) => {

@@ -8,7 +8,13 @@ export const tableMixin = {
     },
     reset() {
       for (let i in this.$data.searchForm) {
-        this.$data.searchForm[i] = ''
+        if (this.$data.searchForm[i] instanceof Array) {
+          this.$data.searchForm[i] = []
+        } else if (this.$data.searchForm[i] instanceof Object) {
+          this.$data.searchForm[i] = {}
+        } else {
+          this.$data.searchForm[i] = ''
+        }
       }
       this.$data.searchForm.page = 1
       this.$data.searchForm.pageSize = 10
@@ -25,8 +31,8 @@ export const tableMixin = {
       this.getList()
     },
 
-    dataFormat(time: string) {
-      if (time == '') return ''
+    dataFormat(time: number) {
+      if (!time) return ''
       const date = new Date(time)
       const y = date.getFullYear()
       const m = (date.getMonth() + 1 + '').padStart(2, '0')
@@ -36,6 +42,11 @@ export const tableMixin = {
       const ss = (date.getSeconds() + '').padStart(2, '0')
       return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
     },
+
+    getTime(e: string) {
+      return e ? new Date(e).getTime() : ''
+    },
+
   }
 
 }
