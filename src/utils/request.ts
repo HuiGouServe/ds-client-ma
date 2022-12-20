@@ -63,13 +63,28 @@ const http = {
     })
   },
 
-  downLoad(url: String, data: any) { //下载 上传
+  downLoad(url: String, data: any) { // 上传
     return new Promise((resolve, reject) => {
       server({ url, data, method: 'POST', headers: { 'Content-Type': 'multipart/form-data' } }).then((response: any) => {
         resolve(response.data);
       }, (err: any) => {
         reject(err)
       })
+    })
+  },
+
+  upLoad(url: string, data: any, name: string) { // 下载excel
+    server({ url, data, method: 'POST', responseType: 'blob' }).then((res: any) => {
+      if (res.status == 200) {
+        const link = document.createElement('a')
+        link.download = name;
+        link.style.display = 'none';
+        link.href = URL.createObjectURL(new Blob([res.data], { type: 'application/vnd.ms-excel;charset=utf-8' }));
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href)
+        document.body.removeChild(link)
+      }
     })
   },
   baseURL

@@ -52,11 +52,11 @@ export const spuerRoutes: Array<RouteRecordRaw> = [  //超级管理员
         name: '用户管理',
         component: () => import('@/views/user/index.vue'),
         children: [
-          {
-            path: '/user/backgroundManagement',
-            name: '客服管理',
-            component: () => import('@/views/user/backgroundManagement/index.vue'),
-          },
+          // {
+          //   path: '/user/backgroundManagement',
+          //   name: '客服管理',
+          //   component: () => import('@/views/user/backgroundManagement/index.vue'),
+          // },
           {
             path: '/user/clientManagemen',
             name: '客户管理',

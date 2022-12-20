@@ -31,9 +31,20 @@
     </div>
     <div class="table">
       <div style="margin-bottom: 10px;text-align: left;margin: 5px 0;display: flex;align-items: center;">
-        <el-button v-for="item in crudList" :key="item.index" :type="item.type" @click.stop="crudClick(item.name)">
-          {{ item.name }}
-        </el-button>
+
+        <div v-for="item in crudList" :key="item.index" style="margin-right:5px">
+          <el-upload action="#" accept=".xls,.xlsx" :show-file-list="false" :auto-upload="false"
+            :on-change="excelChange" v-if="item.type == 'up'">
+            <template #trigger>
+              <el-button type="primary">{{ item.name }}</el-button>
+            </template>
+          </el-upload>
+
+          <el-button :type="item.type" @click.stop="crudClick(item.name)" v-else>
+            {{ item.name }}
+          </el-button>
+        </div>
+
         <div style="margin-left:auto;">
           <el-popover placement="top" :width="800">
             <el-checkbox-group v-model="checkList" @change="checkChange">
@@ -117,9 +128,11 @@
 <script lang='ts'>
 import { defineComponent, toRefs } from 'vue'
 import { Menu } from '@element-plus/icons-vue'
+import http from "@/utils/request"
+import { getToken } from '@/utils/cookie'
 export default defineComponent({
   components: { Menu },
-  emits: ["handleCurrentChange", "selectionChange", "search", "reset", "operationClick", "textClick", "crudClick", "selectAll"
+  emits: ["handleCurrentChange", "excelChange", "selectionChange", "search", "reset", "operationClick", "textClick", "crudClick", "selectAll"
   ],
   props: {
     crudList: {
@@ -209,7 +222,8 @@ export default defineComponent({
       checkList: this.checks,
       checkData: this.checkDatas,
       current_page: this.page,
-      page_size: this.pageSize
+      page_size: this.pageSize,
+      headers: { token: getToken() }
     };
   },
 
@@ -257,6 +271,11 @@ export default defineComponent({
       this.$emit("selectAll", e)
     },
 
+    excelChange(e: any) {
+      console.log(e);
+      this.$emit("excelChange", e)
+    },
+
     checkChange(e: any) {
       const data: any = []
       this.copyData.forEach((item: any) => {
@@ -283,6 +302,10 @@ export default defineComponent({
 
 :deep(.el-table--border, .el-table--group) {
   border: 1px solid #8a8a8a;
+}
+
+:deep(.el-upload-list) {
+  margin: 0;
 }
 
 :deep(.el-table td,

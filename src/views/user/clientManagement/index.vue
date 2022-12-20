@@ -5,7 +5,8 @@
       :crudList="crudList" @crudClick="crudClick" @handleSizeChange="handleSizeChange"
       @handleCurrentChange="handleCurrentChange" @search="search" @reset="reset" @selectionChange="selectionChange"
       :cellObj="cellObj" :page="searchForm.page" :pageSize="searchForm.pageSize" :total="total"
-      @operationClick="operationClick" @selectAll="selectAll" :loading="loading" :maxHeight="maxHeight" />
+      @operationClick="operationClick" @selectAll="selectAll" :loading="loading" :maxHeight="maxHeight"
+      @excelChange="excelChange" />
 
     <dialogList :formList="formList" :dialogVisible="dialogVisible" :width="dialogWidth" :ruleForm="ruleForm"
       :title="title" :rules="rules" @close="close" :showClose="showClose" @resetForm="resetForm" top="3vh"
@@ -76,7 +77,8 @@ export default defineComponent({
         { type: 'date', name: '注册时间：', key: "time", dateType: "daterange", placeholder: '请选择时间', width: '210' },
       ],
       crudList: [
-        { name: '批量导出', type: 'success' }
+        { name: '批量导出', type: 'success' },
+        { name: '导入', type: 'up' },
       ],
       searchForm: {
         userName: '',
@@ -107,13 +109,23 @@ export default defineComponent({
 
   methods: {
     crudClick(name: string) {
-
+      if (name == '批量导出') {
+        http.upLoad('/user/downloadClientList', { userIds: this.userIds }, "客户管理")
+      }
+    },
+    excelChange(e: any) {
+      let formData = new FormData()
+      formData.append('file', e.raw)
+      http.downLoad('/user/upClientExcel', formData).then((res) => {
+        this.$message.success("上传成功")
+        this.reset()
+      })
     },
     operationClick(item: any, name: string) {
       if (name == '修改') {
         this.dialogVisible = true
         this.ruleForm = copyObj(item)//JSON.parse(JSON.stringify(item))
-      } else if (name == '删除') {
+      } else if (name == '禁用') {
 
       }
     },
@@ -139,7 +151,7 @@ export default defineComponent({
           this.tableData = res.data.records
           this.total = res.data.total
         }
-      })
+      }).catch(() => { this.loading = false })
     },
     selectionChange(e: any) {
       this.userIds = []

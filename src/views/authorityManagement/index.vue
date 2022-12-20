@@ -5,7 +5,7 @@
       :crudList="crudList" @crudClick="crudClick" @handleSizeChange="handleSizeChange"
       @handleCurrentChange="handleCurrentChange" @search="search" @reset="reset" @selectionChange="selectionChange"
       :cellObj="cellObj" :page="searchForm.page" :pageSize="searchForm.pageSize" :total="total"
-      @operationClick="operationClick" @selectAll="selectAll" :loading="loading" />
+      @operationClick="operationClick" @selectAll="selectAll" :loading="loading" @excelChange="excelChange" />
 
     <dialogList :formList="formList" :dialogVisible="dialogVisible" :width="dialogWidth" :ruleForm="ruleForm"
       :title="title" :rules="rules" @close="close" :showClose="showClose" @resetForm="resetForm"
@@ -21,6 +21,7 @@ import { tableMixin } from '@/mixins/index'
 import { defineComponent } from 'vue'
 import http from '@/utils/request'
 import { copyObj } from '@/utils/index'
+import axios from 'axios'
 
 export default defineComponent({
   components: { tableList, dialogList },
@@ -86,7 +87,8 @@ export default defineComponent({
       crudList: [
         { name: '新增', type: 'primary' },
         { name: '批量删除', type: 'danger' },
-        { name: '批量导出', type: 'success' }
+        { name: '批量导出', type: 'success' },
+        { name: '导入', type: 'up' },
       ],
       searchForm: {
         time: [],
@@ -147,8 +149,18 @@ export default defineComponent({
               }
             })
           })
-
       }
+      if (name == '批量导出') {
+        http.upLoad('/user/download', { userIds: this.userIds }, "客服管理")
+      }
+    },
+    excelChange(e: any) {
+      let formData = new FormData()
+      formData.append('file', e.raw)
+      http.downLoad('/user/upExcel', formData).then((res) => {
+        this.$message.success("上传成功")
+        this.reset()
+      })
     },
     operationClick(item: any, name: string) {
       if (name == '修改') {
@@ -209,7 +221,7 @@ export default defineComponent({
           this.tableData = res.data.records
           this.total = res.data.total
         }
-      })
+      }).catch(() => { this.loading = false })
     },
     selectionChange(e: any) {
       this.userIds = []
